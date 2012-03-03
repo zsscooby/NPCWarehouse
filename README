@@ -1,0 +1,10 @@
+This is a plugin made for Bukkit servers by jeremytrains
+Anybody who uses this plugin must follow the JTrains Plugins License
+The JTPL can be found at http://dev.bukkit.org/licenses/1242-jtrains-plugins-license/
+
+==== Installation ====
+1) Download the latest Recommended Build from http://dev.bukkit.org/server-mods/npcwarehouse/files
+2) Drag and drop the jar file into the .../plugins/ directory
+3) Start the server to generate files
+4) Edit the .../plugins/NPCWarehouse/config.yml
+5) Restart your server and your ready to roll!
