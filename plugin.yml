@@ -1,0 +1,16 @@
+name: NPCWarehouse
+main: me.jeremytrains.npcwh.NPCWarehouse
+version: 0.5
+commands:
+   npc:
+      description: The NPCWarehouse command
+      usage: |
+           /npc [arguments]
+   npcwh:
+      description: The NPCWarehouse command
+      usage: |
+           /npcwh [arguments]
+   npcwarehouse:
+      description: The NPCWarehouse command
+      usage: |
+           /npcwarehouse [arguments]
