@@ -7,6 +7,7 @@ public class NPCMobEntity extends net.minecraft.server.EntityCreature {
 
 	public NPCMobEntity(World world) {
 		super(world);
+		
 	}
 
 	@Override

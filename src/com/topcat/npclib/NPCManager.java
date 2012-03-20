@@ -37,13 +37,11 @@ import com.topcat.npclib.nms.NPCNetworkManager;
  */
 public class NPCManager {
 
-	//JEREMYTRAINS START - Changed all lines from 'private' to 'protected'
-	protected HashMap<String, NPC> npcs = new HashMap<String, NPC>();
-	protected BServer server;
-	protected int taskid;
-	protected Map<World, BWorld> bworlds = new HashMap<World, BWorld>();
-	protected NPCNetworkManager npcNetworkManager;
-	//JEREMYTRAINS END - Changed all lines from 'private' to 'protected'
+	private HashMap<String, NPC> npcs = new HashMap<String, NPC>();
+	private BServer server;
+	private int taskid;
+	private Map<World, BWorld> bworlds = new HashMap<World, BWorld>();
+	private NPCNetworkManager npcNetworkManager;
 	public static JavaPlugin plugin;
 
 	public NPCManager(JavaPlugin plugin) {
@@ -57,7 +55,7 @@ public class NPCManager {
 				HashSet<String> toRemove = new HashSet<String>();
 				for (String i : npcs.keySet()) {
 					Entity j = npcs.get(i).getEntity();
-					j.am();
+					j.az();
 					if (j.dead) {
 						toRemove.add(i);
 					}

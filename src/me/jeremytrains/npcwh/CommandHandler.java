@@ -55,7 +55,7 @@ public class CommandHandler implements CommandExecutor {
 			
 			
 			if (args[0].equalsIgnoreCase("item") || args[0].equalsIgnoreCase("remove") || args[0].equalsIgnoreCase("move") || args[0].equalsIgnoreCase("rename") || args[0].equalsIgnoreCase("age") || args[0].equalsIgnoreCase("waypoint") || args[0].equalsIgnoreCase("message") || args[0].equalsIgnoreCase("skin") || args[0].equalsIgnoreCase("cape") || args[0].equalsIgnoreCase("armor")) {
-				if (plugin.selected.get(playerP) == null) {
+				if (plugin.selected.get(playerP) == null || plugin.manager.getNPC(plugin.selected.get(playerP)) == null) {
 					playerP.sendMessage(ChatColor.RED + "You need to select an npc first!");
 					return true;
 				}

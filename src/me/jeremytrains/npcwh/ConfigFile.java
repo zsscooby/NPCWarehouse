@@ -62,7 +62,7 @@ public class ConfigFile {
     	return config.getInt(root);
     }
     
-	private List<Object> readStringList(String root){
+	private List<?> readStringList(String root){
         YamlConfiguration config = load();
         return config.getList(root);
     }
