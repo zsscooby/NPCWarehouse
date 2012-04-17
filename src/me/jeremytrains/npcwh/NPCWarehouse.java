@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.Plugin;
@@ -54,6 +53,8 @@ public class NPCWarehouse extends JavaPlugin {
 		if (inSetupMode) {
 			log.info(INTRO + "Plugin is in Development Mode! Some features may not work!");
 		}
+		config = new ConfigFile(this);
+		config.configCheck();
 		setupLinkedPlugins();
 		commandHandler = new CommandHandler(this);
 		log.info(INTRO + "Setting up command handler...");
@@ -81,8 +82,6 @@ public class NPCWarehouse extends JavaPlugin {
 			}
 		}, 60);
 		log.info(INTRO + "Npc data loaded successfully!");
-		config = new ConfigFile(this);
-		config.configCheck();
 		log.info(INTRO + "Setting up listeners...");
 		this.getServer().getPluginManager().registerEvents(new PlList(this), this);
 		this.getServer().getPluginManager().registerEvents(new BlockList(this), this);
@@ -214,7 +213,7 @@ public class NPCWarehouse extends JavaPlugin {
 	}
 	
 	private void setupFactions() {
-		Plugin factionsPlugin = this.getServer().getPluginManager().getPlugin("Spout");
+		Plugin factionsPlugin = this.getServer().getPluginManager().getPlugin("Factions");
 	    
 	    if (factionsPlugin == null) {
 	        log.info(INTRO + "Factions not detected! Factions features will be disabled.");
