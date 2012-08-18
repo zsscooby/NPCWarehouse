@@ -4,7 +4,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 
 import com.topcat.npclib.entity.HumanNPC;
 import com.topcat.npclib.entity.NPC;
@@ -51,67 +55,20 @@ public class PlList implements Listener {
                     }
                     event.setCancelled(true);
 
-                }/* else if (nevent.getNpcReason() == NpcTargetReason.NPC_BOUNCED) {
-                    Player p = (Player) event.getTarget();
-                    p.sendMessage("<" + npc.getName() + "> Stop bouncing on me!");
-                    event.setCancelled(true);
-                }*/
+                }
             }
         }
-
     }
 	
-	/*@Override
-	public void onPlayerMove(PlayerMoveEvent event) {
-		NPCData npc = getNearestNpc(event.getPlayer());
-		
-		if (npc != null) {
-			npc.chat(event.getPlayer());
-		}
-	}
-	
-	@Override
-	public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-		Player p = event.getPlayer();
-		Entity e = event.getRightClicked();
-		if (e instanceof HumanNPC) {
-			NPCData npc = plugin.getNpcInfo((HumanNPC)e);
-			
-			if (plugin.selected.containsKey(p)) {
-				if (plugin.selected.get(p).equals(npc.getId())) {
-					
-				}
-				npc.chat(p);
-				return;
-			} else {
-				p.sendMessage(ChatColor.GREEN + "You selected " + ChatColor.YELLOW  + " <ID: " + npc.getId() + ">");
-			}
-		}
-	}
-	
-	public NPCData getNearestNpc(Player p) {
-		Location l = p.getLocation();
-		if (l == null) {
-			throw new IllegalArgumentException("l cannot be null!");
-		}
-		NPCData npc = null;
-		int prev = 1000000000;
-		final NPCData[] npcs = plugin.npcs;
-		for (int i = 0; i < npcs.length; i++) {
-			if (npcs[i] != null) {
-				Location nl = npcs[i].getLocation();
-				int a = (int)Math.sqrt((double)(((nl.getBlockX() - l.getBlockX()) ^ 2) + ((nl.getBlockY() - l.getBlockY()) ^ 2)));
-				int b;
-				if (a <= dist) {
-					b = (int)Math.sqrt((double)((a ^ 2) + ((nl.getBlockZ() - l.getBlockZ()) ^ 2)));
-					if (b <= dist) {
-						if (b < prev) {
-							npc = npcs[i];
-						}
-					}
+	@EventHandler
+	public void onEntityDeath(org.bukkit.event.entity.EntityDamageByEntityEvent event) {
+		if (plugin.manager.isNPC(event.getEntity())) {
+			if (event.getDamager() instanceof Player) {
+				if (NPCWarehouse.playerHasPermission((Player)event.getDamager(), "NPCWarehouse.kill") == false) {
+					event.setCancelled(true);
+					((Player)event.getDamager()).sendMessage(ChatColor.RED + "You do not have permission to hurt NPCs");
 				}
 			}
 		}
-		return npc;
-	}*/
+	}
 }

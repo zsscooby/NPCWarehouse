@@ -15,8 +15,9 @@ public class ConfigFile {
     File file = new File(directory + File.separator + "config.yml");
     
     //CONFIG FILE SETTINGS
-	public static boolean useSpout=false, enableMobs=false, usePermissions=true, rightClickSelect=true, capes=false, skins=false, crafting=true;
-	public static int mobMaxHealth = 20;
+	public static boolean useSpout=false, enableGuards=false, enableGuardAlerts=false, usePermissions=true, rightClickSelect=true, capes=false, skins=false, crafting=true;
+	public static int guardMaxHealth = 20;
+	public static String chatFormat, guardAlertFormat;
 	//=-=-=-=-=-=-=-=-=-=-	
 	
 	
@@ -86,11 +87,14 @@ public class ConfigFile {
         write("General.use-permissions", true);
         write("General.enable-right-click-selecting", true);
         write("General.enable-npc-crafting", true);
+        write("Messages.chat-format", "'<{name}> {msg}'");
+        write("Messages.enable-guard-alerts", true);
+        write("Messages.guard-alert-format", "'<{name}> Warning! {attacker} is attacking!'");
         write("Spout.use-spout", false);
         write("Spout.allow-skin-changing", false);
         write("Spout.allow-cape-changing", false);
-        write("Mob-NPCs.enable", true);
-        write("Mob-NPCs.max-health", 20);
+        write("Guard-NPCs.enable", true);
+        write("Guard-NPCs.max-health", 20);
         loadkeys();
         plugin.log.info(plugin.INTRO + "Config File Generated Successfully!");
     }
@@ -100,11 +104,14 @@ public class ConfigFile {
         usePermissions = readBoolean("General.use-permissions");
         rightClickSelect = readBoolean("General.right-click-selecting");
         crafting = readBoolean("General.enable-npc-crafting");
+        enableGuardAlerts = readBoolean("Messages.enable-guard-alerts");
+        guardAlertFormat = readString("Messages.guard-alert-format");
+        chatFormat = readString("Messages.chat-format");
         useSpout = readBoolean("Spout.use-spout");
         capes = readBoolean("Spout.allow-cape-changing");
         skins = readBoolean("Spout.allow-skin-changing");
-        enableMobs = readBoolean("Mob-NPCs.enable");
-        mobMaxHealth = readInt("Mob-NPCs.max-health");
+        enableGuards = readBoolean("Guard-NPCs.enable");
+        guardMaxHealth = readInt("Guard-NPCs.max-health");
         plugin.log.info(plugin.INTRO + "Config File Loaded Successfully!");
     }
 }

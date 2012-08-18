@@ -7,7 +7,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 public class NPCCreationEvent extends Event {
-	private static final long serialVersionUID = -8108685956288694847L;
 	private static final HandlerList handlers = new HandlerList();
 	
 	private NPCData npc;

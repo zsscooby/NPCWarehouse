@@ -20,6 +20,10 @@ public class NPCWarehouseAPI {
 		return createNpc(name, loc, "Hello!");
 	}
 	
+	public void removeNpc(int id) {
+		plugin.commandHandler.removeNPC(plugin.getNpcInfo((HumanNPC)plugin.manager.getNPC(String.valueOf(id))));
+	}
+	
 	public void moveNpc(String id, Location l) {
 		NPCData npc = plugin.getNpcInfo((HumanNPC)plugin.manager.getNPC(id));
 		

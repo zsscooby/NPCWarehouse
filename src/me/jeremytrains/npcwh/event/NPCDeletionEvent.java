@@ -5,7 +5,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 public class NPCDeletionEvent extends Event {
-	private static final long serialVersionUID = 2513685238642067903L;
 	private static final HandlerList handlers = new HandlerList();
 	private String npcId;
 	private Player player;

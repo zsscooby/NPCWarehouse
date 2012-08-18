@@ -55,7 +55,7 @@ public class NPCManager {
 				HashSet<String> toRemove = new HashSet<String>();
 				for (String i : npcs.keySet()) {
 					Entity j = npcs.get(i).getEntity();
-					j.aA();
+					j.z();
 					if (j.dead) {
 						toRemove.add(i);
 					}
@@ -127,7 +127,6 @@ public class NPCManager {
 			BWorld world = getBWorld(l.getWorld());
 			NPCEntity npcEntity = new NPCEntity(this, world, name, new ItemInWorldManager(world.getWorldServer()));
 			npcEntity.setPositionRotation(l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch());
-			//npcEntity.X = l.getYaw();
 			world.getWorldServer().addEntity(npcEntity); //the right way
 			NPC npc = new HumanNPC(npcEntity);
 			npcs.put(id, npc);

@@ -93,7 +93,7 @@ public class NPCWarehouse extends JavaPlugin {
 					new File("plugins/update/NPCWarehouse.jar").delete();
 				}
 				new File("plugins/update/NPCWarehouse.jar").createNewFile();
-				new AutoUpdater("http://aleath.onlinewebshop.net/latest_npcwh.jar", this).download("plugins/update/NPCWarehouse.jar");
+				new AutoUpdater("http://dl.dropbox.com/u/31442127/Plugins/NPCWarehouse/latest_npcwh.jar", this).download("plugins/update/NPCWarehouse.jar");
 			}
 		} catch(IOException e) {
 			e.printStackTrace();

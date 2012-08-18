@@ -86,21 +86,7 @@ public class CommandHandler implements CommandExecutor {
 				Bukkit.getServer().getPluginManager().callEvent(event);
 			
 			} else if (args[0].equalsIgnoreCase("remove")) {
-				NPC npc = plugin.manager.getNPC(plugin.selected.get(playerP));
-				playEffect(Effect.SMOKE, npc.getBukkitEntity().getLocation(), 10);
-				plugin.manager.despawnById(plugin.selected.get(playerP));
-				for (int i = 0; i < plugin.npcs.length; i++) {
-					if (plugin.npcs[i] != null) {
-						if (plugin.npcs[i].npc.equals(npc)) {
-							plugin.npcs[i] = null;
-						}
-					}
-				}
-				NPCDeletionEvent event = new NPCDeletionEvent(plugin.selected.get(playerP), playerP);
-				Bukkit.getServer().getPluginManager().callEvent(event);
-			
-			
-			
+				removeNPC(plugin.getNpcInfo((HumanNPC)plugin.manager.getNPC(plugin.selected.get(playerP))));			
 			} else if (args[0].equalsIgnoreCase("move")) {
 				String npcId;
 				HumanNPC npcE;
@@ -434,5 +420,19 @@ public class CommandHandler implements CommandExecutor {
 		NPCCreationEvent event = new NPCCreationEvent(plugin.getNpcInfo((HumanNPC)plugin.manager.getNPC(String.valueOf(plugin.npcs[num].getId()))), playerP, craft);
 		Bukkit.getServer().getPluginManager().callEvent(event);
 		return num;
+	}
+	
+	public void removeNPC(NPCData npcD) {
+		playEffect(Effect.SMOKE, npcD.npc.getBukkitEntity().getLocation(), 10);
+		plugin.manager.despawnById(String.valueOf(npcD.getId()));
+		for (int i = 0; i < plugin.npcs.length; i++) {
+			if (plugin.npcs[i] != null) {
+				if (plugin.npcs[i].npc.equals(npcD.npc)) {
+					plugin.npcs[i] = null;
+				}
+			}
+		}
+		NPCDeletionEvent event = new NPCDeletionEvent(String.valueOf(npcD.getId()), null);
+		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 }
