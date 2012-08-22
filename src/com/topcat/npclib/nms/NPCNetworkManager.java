@@ -13,7 +13,9 @@ import net.minecraft.server.Packet;
 public class NPCNetworkManager extends NetworkManager {
 
 	public NPCNetworkManager() {
-			super(createSocket(), "NPC Manager", new NetHandler() {
+			super(createSocket(),
+					"NPC Manager",
+					new NetHandler() {
 			@Override
 			public boolean a() {
 				return true;
