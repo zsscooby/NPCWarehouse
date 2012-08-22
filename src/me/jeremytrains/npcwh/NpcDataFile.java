@@ -13,7 +13,7 @@ import org.bukkit.Material;
 
 public class NpcDataFile {
 	public File file = new File("plugins/NPCWarehouse/NpcData.txt");
-	private static final int ID = 0, MESSAGE = 1, WORLD = 2, X = 3, Y = 4, Z = 5, YAW = 6, PITCH = 7, NAME= 8, ITEM = 9;
+	private static final int ID = 0, MESSAGE = 1, WORLD = 2, X = 3, Y = 4, Z = 5, YAW = 6, PITCH = 7, NAME= 8, ITEM = 9, LOOKAT = 10;
 	NPCWarehouse plugin;
 	NPCData[] data;
 	public int totNpcs = 0, totWorlds = 0;
@@ -77,14 +77,29 @@ public class NpcDataFile {
 				} else if (parts[1].equals("null")) {
 					parts[1] = "Hello!";
 				}
+				
+				//=== VERSION CHECK ===
+				
+				
 				//If the file is in the v0.2 format (no yaw or pitch)
 				if (parts.length == 8) {
 					String[] old = parts;
 					parts = new String[]{old[0], old[1], old[2], old[3], old[4], old[5], "0", "0", old[6], old[7]};
 					oldRegistries++;
 				}
+				//If the file is in the v0.6.2 format (no lookat boolean)
+				if (parts.length == 10) {
+					String[] old = parts;
+					parts = new String[]{old[0], old[1], old[2], old[3], old[4], old[5], old[6], old[7], old[8], old[9], "true"};
+					oldRegistries++;
+				}
+				
+				
+				//=== END VERSION CHECK ===
+				
 				Location l = new Location(plugin.getServer().getWorld(parts[WORLD]), Double.parseDouble(parts[X]), Double.parseDouble(parts[Y]), Double.parseDouble(parts[Z]), Float.parseFloat(parts[YAW]), Float.parseFloat(parts[PITCH]));
 				npcx[nextNpc] = new NPCData((HumanNPC)plugin.manager.spawnHumanNPC(parts[NAME], l, parts[ID]), parts[MESSAGE], Integer.parseInt(parts[ID]), l);
+				npcx[nextNpc].setLookat(Boolean.parseBoolean(parts[LOOKAT]));
 				if (!parts[ITEM].equals("0")) {
 					npcx[nextNpc].npc.setItemInHand(Material.getMaterial(Integer.parseInt(parts[7])));
 				}
@@ -106,7 +121,7 @@ public class NpcDataFile {
 			nextNpc++;
 		}
 		if (oldRegistries > 0) {
-			plugin.log.info(plugin.INTRO + "Found and reformatted " + oldRegistries + " npc listing(s) in your NpcData file from v0.2");
+			plugin.log.info(plugin.INTRO + "Found and reformatted " + oldRegistries + " npc listing(s) in your NpcData file from an old version");
 		}
 		return npcx;
 	}

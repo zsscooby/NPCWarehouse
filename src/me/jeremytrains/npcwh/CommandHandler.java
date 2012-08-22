@@ -82,8 +82,6 @@ public class CommandHandler implements CommandExecutor {
 				}
 				int id = createNPC(args[1], playerP.getLocation(), message, false, playerP);
 				playerP.sendMessage(ChatColor.YELLOW + args[1] + ChatColor.DARK_GRAY + " was born! " + ChatColor.GREEN + "<ID: " + id + ">");
-				NPCCreationEvent event = new NPCCreationEvent(plugin.getNpcInfo((HumanNPC)plugin.manager.getNPC(String.valueOf(id))), playerP, false);
-				Bukkit.getServer().getPluginManager().callEvent(event);
 			
 			} else if (args[0].equalsIgnoreCase("remove")) {
 				removeNPC(plugin.getNpcInfo((HumanNPC)plugin.manager.getNPC(plugin.selected.get(playerP))));			

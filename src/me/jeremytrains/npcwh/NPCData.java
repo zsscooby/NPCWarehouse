@@ -11,6 +11,7 @@ public class NPCData {
 	private String message = "Hello!";
 	private int ticksLived, id, nextWp;
 	private int ticksPerSecond = 20;
+	private boolean lookAt = true;
 	Location loc;
 	public NPCWaypoint waypoint;
 	public final static String DEFAULT_SKIN = "http://www.minecraft.net/images/char.png";
@@ -23,8 +24,12 @@ public class NPCData {
 		waypoint = new NPCWaypoint(this);
 	}
 	
+	public boolean getLookAt() {
+		return lookAt;
+	}
+	
 	public String getAge() {
-		int ticks = ticksLived + npc.getBukkitEntity().getTicksLived();
+		int ticks = getTotTicksLived();
 		int days = ((((ticks / ticksPerSecond) / 60) / 60) / 24);
 		return this.npc.getName() + " has been alive for " + days + " days";
 	}
@@ -51,6 +56,10 @@ public class NPCData {
 	
 	public void setMessage(String me) {
 		message = me;
+	}
+	
+	public void setLookat(boolean l) {
+		lookAt = l;
 	}
 	
 	public void moveToNextWaypoint() {

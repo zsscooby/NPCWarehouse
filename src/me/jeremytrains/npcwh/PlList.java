@@ -4,11 +4,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
 
 import com.topcat.npclib.entity.HumanNPC;
 import com.topcat.npclib.entity.NPC;
@@ -37,8 +34,11 @@ public class PlList implements Listener {
                 if (nevent.getNpcReason() == NpcTargetReason.CLOSEST_PLAYER || nevent.getNpcReason() == NpcTargetReason.NPC_BOUNCED) {
                     Player p = (Player) event.getTarget();
                     p.sendMessage("<" + npc.getName() + "> " + plugin.getNpcInfo(npc).getMessage());
+                    if(plugin.getNpcInfo(npc).getLookAt()) {
+                    	npc.lookAtPoint(p.getLocation());
+                    }
                     event.setCancelled(true);
-
+                    
                 } else if (nevent.getNpcReason() == NpcTargetReason.NPC_RIGHTCLICKED) {
                     Player p = (Player) event.getTarget();
                     if (plugin.selected.containsKey(p)) {
@@ -61,7 +61,7 @@ public class PlList implements Listener {
     }
 	
 	@EventHandler
-	public void onEntityDeath(org.bukkit.event.entity.EntityDamageByEntityEvent event) {
+	public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
 		if (plugin.manager.isNPC(event.getEntity())) {
 			if (event.getDamager() instanceof Player) {
 				if (NPCWarehouse.playerHasPermission((Player)event.getDamager(), "NPCWarehouse.kill") == false) {

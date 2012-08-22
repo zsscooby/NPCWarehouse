@@ -92,8 +92,8 @@ public class NPCWarehouse extends JavaPlugin {
 				if (new File("plugins/update/NPCWarehouse.jar").exists()) {
 					new File("plugins/update/NPCWarehouse.jar").delete();
 				}
-				new File("plugins/update/NPCWarehouse.jar").createNewFile();
-				new AutoUpdater("http://dl.dropbox.com/u/31442127/Plugins/NPCWarehouse/latest_npcwh.jar", this).download("plugins/update/NPCWarehouse.jar");
+				new File("plugins/update/NPCWarehouseUpdate.jar").createNewFile();
+				new AutoUpdater("https://bitbucket.org/jeremytrains/npcwarehouse/downloads/NPCWarehouse.jar", this).download("plugins/update/NPCWarehouse.jar");
 			}
 		} catch(IOException e) {
 			e.printStackTrace();
@@ -142,7 +142,7 @@ public class NPCWarehouse extends JavaPlugin {
 		log.info(INTRO + "Checking for latest version...");
 		URL url = null;
 		try {
-			url = new URL("http://aleath.onlinewebshop.net/npcwh.txt");
+			url = new URL("http://dl.dropbox.com/u/31442127/Plugins/NPCWarehouse/version.txt");
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
