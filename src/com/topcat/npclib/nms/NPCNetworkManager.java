@@ -13,12 +13,13 @@ import net.minecraft.server.Packet;
 public class NPCNetworkManager extends NetworkManager {
 
 	public NPCNetworkManager() {
-		super(new NullSocket(), "NPC Manager", new NetHandler() {
+			super(createSocket(), "NPC Manager", new NetHandler() {
 			@Override
 			public boolean a() {
 				return true;
 			}
 		}, null);
+			
 		try {
 			Field f = NetworkManager.class.getDeclaredField("m");
 			f.setAccessible(true);
@@ -26,6 +27,15 @@ public class NPCNetworkManager extends NetworkManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private static NullSocket createSocket() {
+		try {
+			return new NullSocket();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	@Override
