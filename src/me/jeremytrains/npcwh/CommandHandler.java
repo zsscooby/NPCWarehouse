@@ -1,7 +1,9 @@
 package me.jeremytrains.npcwh;
 
-import me.jeremytrains.npcwh.event.NPCCreationEvent;
-import me.jeremytrains.npcwh.event.NPCDeletionEvent;
+import me.jeremytrains.npcwh.api.event.NPCCreationEvent;
+import me.jeremytrains.npcwh.api.event.NPCDeletionEvent;
+import me.jeremytrains.npcwh.api.event.NPCPropertyChangeEvent;
+import me.jeremytrains.npcwh.api.event.NPCPropertyChangeEvent.Property;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -18,7 +20,7 @@ import com.topcat.npclib.entity.*;
 
 public class CommandHandler implements CommandExecutor {
 	NPCWarehouse plugin;
-	String[] validCmds = new String[]{"create", "rename", "move", "help", "select", "remove", "item", "list", "age", "message", "skin", "cape", "armor"};
+	String[] validCmds = new String[]{"create", "rename", "move", "help", "select", "remove", "item", "list", "age", "message", "skin", "cape", "armor", "lookat", "owner"};
 	
 	public CommandHandler(NPCWarehouse instance) {
 		plugin = instance;
@@ -57,6 +59,13 @@ public class CommandHandler implements CommandExecutor {
 			if (args[0].equalsIgnoreCase("item") || args[0].equalsIgnoreCase("remove") || args[0].equalsIgnoreCase("move") || args[0].equalsIgnoreCase("rename") || args[0].equalsIgnoreCase("age") || args[0].equalsIgnoreCase("waypoint") || args[0].equalsIgnoreCase("message") || args[0].equalsIgnoreCase("skin") || args[0].equalsIgnoreCase("cape") || args[0].equalsIgnoreCase("armor")) {
 				if (plugin.selected.get(playerP) == null || plugin.manager.getNPC(plugin.selected.get(playerP)) == null) {
 					playerP.sendMessage(ChatColor.RED + "You need to select an npc first!");
+					return true;
+				}
+			}
+			
+			if (args[0].equalsIgnoreCase("item") || args[0].equalsIgnoreCase("remove") || args[0].equalsIgnoreCase("move") || args[0].equalsIgnoreCase("rename") || args[0].equalsIgnoreCase("waypoint") || args[0].equalsIgnoreCase("message") || args[0].equalsIgnoreCase("skin") || args[0].equalsIgnoreCase("cape") || args[0].equalsIgnoreCase("armor")) {
+				if (!plugin.getNpcInfo(plugin.getPlayersSelectedNpc(playerP)).isOwner(playerP)) {
+					playerP.sendMessage(ChatColor.RED + "You need to be " + plugin.getPlayersSelectedNpc(playerP).getName() + "'s owner to do that!");
 					return true;
 				}
 			}
@@ -111,7 +120,6 @@ public class CommandHandler implements CommandExecutor {
 				for (int i = 0; i < plugin.getServer().getOnlinePlayers().length; i++) {
 					plugin.getServer().getOnlinePlayers()[i].playEffect(npcE.getBukkitEntity().getLocation(), Effect.SMOKE, 10);
 				}
-				npcE.moveTo(l);
 				for (int i = 0; i < plugin.npcs.length; i++) {
 					if (plugin.npcs[i] != null) {
 						if (plugin.npcs[i].equals(plugin.getNpcInfo(npcE))) {
@@ -120,7 +128,7 @@ public class CommandHandler implements CommandExecutor {
 					}
 				}
 				playEffect(Effect.SMOKE, playerP.getLocation(), 10);
-				playerP.sendMessage(ChatColor.GREEN + "Npc " + ChatColor.YELLOW + npcE.getName() + ChatColor.GREEN + " was moved to your location!");
+				playerP.sendMessage(ChatColor.YELLOW + npcE.getName() + ChatColor.GREEN + " was moved to your location!");
 			
 			
 			
@@ -134,7 +142,7 @@ public class CommandHandler implements CommandExecutor {
 				name = name.replace("/", " ");
 				plugin.manager.rename(id, name);
 				playerP.sendMessage(ChatColor.YELLOW + npc.getName() + "'s " + ChatColor.GREEN + "name was changed to " + ChatColor.YELLOW + args[1]);
-			
+				Bukkit.getPluginManager().callEvent(new NPCPropertyChangeEvent(plugin.getNpcInfo(npc), playerP, Property.NAME, name));
 			
 			
 			} else if (args[0].equalsIgnoreCase("item")) {
@@ -274,7 +282,7 @@ public class CommandHandler implements CommandExecutor {
 				}
 				npc.setMessage(message);
 				playerP.sendMessage(ChatColor.YELLOW + npc.npc.getName() + "'s " + ChatColor.GREEN + " message was set to " + ChatColor.YELLOW + message);
-			
+				Bukkit.getPluginManager().callEvent(new NPCPropertyChangeEvent(npc, playerP, Property.MESSAGE, message));
 			
 			
 			} else if (args[0].equalsIgnoreCase("skin")) {
@@ -291,12 +299,13 @@ public class CommandHandler implements CommandExecutor {
 				if (args.length == 1) {
 					npc.npc.getSpoutPlayer().setSkin(NPCData.DEFAULT_SKIN);
 					playerP.sendMessage(ChatColor.YELLOW + npc.npc.getName() + "'s " + ChatColor.GREEN + "skin was changed to " + ChatColor.YELLOW + "the default skin");
+					Bukkit.getPluginManager().callEvent(new NPCPropertyChangeEvent(npc, playerP, Property.SKIN, NPCData.DEFAULT_SKIN));
 					return true;
 				}
 				
 				npc.npc.getSpoutPlayer().setSkin(args[1]);
 				playerP.sendMessage(ChatColor.YELLOW + npc.npc.getName() + "'s " + ChatColor.GREEN + "skin was changed to " + ChatColor.YELLOW + args[1]);
-			
+				Bukkit.getPluginManager().callEvent(new NPCPropertyChangeEvent(npc, playerP, Property.SKIN, args[1]));
 			
 			
 			} else if (args[0].equalsIgnoreCase("cape")) {
@@ -312,11 +321,33 @@ public class CommandHandler implements CommandExecutor {
 				if (args.length == 1) {
 					npc.getSpoutPlayer().setCape(null);
 					playerP.sendMessage(ChatColor.YELLOW + npc.getName() + ChatColor.GREEN + " took off his cape");
+					Bukkit.getPluginManager().callEvent(new NPCPropertyChangeEvent(plugin.getNpcInfo(npc), playerP, Property.CAPE, null));
 				} else if (args.length > 1) {
 					npc.getSpoutPlayer().setCape(args[1]);
 					playerP.sendMessage(ChatColor.YELLOW + npc.getName() + "'s " + ChatColor.GREEN + "cape has been set to " + ChatColor.YELLOW + args[1]);
+					Bukkit.getPluginManager().callEvent(new NPCPropertyChangeEvent(plugin.getNpcInfo(npc), playerP, Property.CAPE, args[1]));
+				}
+			} else if (args[0].equalsIgnoreCase("owner")) {
+				if (args.length < 2) {
+					return false;
+				}
+				NPCData npc = plugin.getNpcInfo(plugin.getPlayersSelectedNpc(playerP));
+				npc.setOwner(args[1]);
+				playerP.sendMessage(ChatColor.YELLOW + npc.npc.getName() + "'s" + ChatColor.GREEN + " owner was set to " + ChatColor.YELLOW + args[1]);
+				Bukkit.getPluginManager().callEvent(new NPCPropertyChangeEvent(npc, playerP, Property.OWNER, args[1]));
+			} else if (args[0].equalsIgnoreCase("lookat")) {
+				NPCData npc = plugin.getNpcInfo(plugin.getPlayersSelectedNpc(playerP));
+				if (npc.getLookAt()) {
+					npc.setLookat(false);
+					playerP.sendMessage(ChatColor.YELLOW + npc.npc.getName() + ChatColor.GREEN + " will stop looking at players");
+					Bukkit.getPluginManager().callEvent(new NPCPropertyChangeEvent(npc, playerP, Property.LOOKAT, false));
+				} else {
+					npc.setLookat(true);
+					playerP.sendMessage(ChatColor.YELLOW + npc.npc.getName() + ChatColor.GREEN + " will now look at players");
+					Bukkit.getPluginManager().callEvent(new NPCPropertyChangeEvent(npc, playerP, Property.LOOKAT, true));
 				}
 			}
+				
 			return true;
 		}
 		return false;
@@ -359,6 +390,14 @@ public class CommandHandler implements CommandExecutor {
 				player.sendMessage(go + "====================================");
 				break;
 			}
+			case 3: {
+				player.sendMessage(go + "===== NPCWarehouse Help Page 2 =====");
+				player.sendMessage(bl + "[] are required, <> are optional");
+				player.sendMessage(ye + "/npc owner [player] -- " + ge + "Sets the npc's owner");
+				player.sendMessage(ye + "/npc lookat -- " + ge + "Toggles if an NPC looks at a player");
+				player.sendMessage(go + "====================================");
+				break;
+			}
 			default: {
 				player.sendMessage(ChatColor.RED + "Help page " + page + " does not exist!");
 				break;
@@ -371,27 +410,6 @@ public class CommandHandler implements CommandExecutor {
 			plugin.getServer().getOnlinePlayers()[i].playEffect(l, e, num);
 		}
 	}
-	
-	/*private boolean isClose(HumanNPC e, Player p, int num) {
-		int x = (int)((e.getBukkitEntity().getLocation().getX() - p.getLocation().getX()));
-		int y = (int)((e.getBukkitEntity().getLocation().getY() - p.getLocation().getY()));
-		int z = (int)((e.getBukkitEntity().getLocation().getZ() - p.getLocation().getZ()));
-		if (x < 0) {
-			x = x * -1;
-		}
-		if (y < 0) {
-			y = y * -1;
-		}
-		if (z < 0) {
-			z = z * -1;
-		}
-		if (x < num && y < num && z < num) {
-			return true;
-		} else {
-			return false;
-		}
-		
-	}*/
 	
 	private boolean isValidCmd(String cmd) {
 		for (int i = 0; i < validCmds.length; i++) {
@@ -407,9 +425,15 @@ public class CommandHandler implements CommandExecutor {
 	public int createNPC(String name, Location loc, String message, boolean craft, Player playerP) {
 		int num = 0;
 		boolean done = false;
+		String owner;
+		if (playerP == null) {
+			owner = "NPCWH_API_CREATED";
+		} else {
+			owner = playerP.getName();
+		}
 		for (int i = 0; i < plugin.npcs.length; i++) {
 			if (plugin.npcs[i] == null && done == false) {
-				plugin.npcs[i] = new NPCData((HumanNPC)plugin.manager.spawnHumanNPC(name, loc, String.valueOf(i)), message, i, loc);
+				plugin.npcs[i] = new NPCData((HumanNPC)plugin.manager.spawnHumanNPC(name, loc, String.valueOf(i), playerP), message, i, loc, owner);
 				num = i;
 				done = true;
 			}

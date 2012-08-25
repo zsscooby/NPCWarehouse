@@ -1,4 +1,4 @@
-package me.jeremytrains.npcwh.event;
+package me.jeremytrains.npcwh.api.event;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;

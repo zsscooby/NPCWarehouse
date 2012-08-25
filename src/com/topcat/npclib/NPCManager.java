@@ -15,10 +15,12 @@ import net.minecraft.server.ItemInWorldManager;
 import net.minecraft.server.WorldServer;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
@@ -108,19 +110,22 @@ public class NPCManager {
 		}
 	}
 
-	public NPC spawnHumanNPC(String name, Location l) {
+	public NPC spawnHumanNPC(String name, Location l, Player player) {
 		int i = 0;
 		String id = name;
 		while (npcs.containsKey(id)) {
 			id = name + i;
 			i++;
 		}
-		return spawnHumanNPC(name, l, id);
+		return spawnHumanNPC(name, l, id, player);
 	}
 
-	public NPC spawnHumanNPC(String name, Location l, String id) {
+	public NPC spawnHumanNPC(String name, final Location l, String id, Player player) {
 		if (npcs.containsKey(id)) {
-			server.getLogger().log(Level.WARNING, "NPC with that id already exists, existing NPC returned");
+			if (player == null)
+				server.getLogger().log(Level.WARNING, "NPC with that id already exists, existing NPC returned");
+			else
+				player.sendMessage(ChatColor.RED + "NPC with that id already exists, existing NPC returned");
 			return npcs.get(id);
 		} else {
 			if (name.length() > 16) { // Check and nag if name is too long, spawn NPC anyway with shortened name.
@@ -130,11 +135,17 @@ public class NPCManager {
 				name = tmp;
 			}
 			BWorld world = getBWorld(l.getWorld());
-			NPCEntity npcEntity = new NPCEntity(this, world, name, new ItemInWorldManager(world.getWorldServer()));
+			final NPCEntity npcEntity = new NPCEntity(this, world, name, new ItemInWorldManager(world.getWorldServer()));
 			npcEntity.setPositionRotation(l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch());
 			world.getWorldServer().addEntity(npcEntity); //the right way
 			NPC npc = new HumanNPC(npcEntity);
 			npcs.put(id, npc);
+			Bukkit.getScheduler().scheduleAsyncDelayedTask(plugin, new Runnable() {
+				@Override
+				public void run() {
+					npcEntity.setPositionRotation(l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch());
+				}
+			}, 20);
 			return npc;
 		}
 	}

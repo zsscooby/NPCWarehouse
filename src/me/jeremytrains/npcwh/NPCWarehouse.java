@@ -92,7 +92,7 @@ public class NPCWarehouse extends JavaPlugin {
 				if (new File("plugins/update/NPCWarehouse.jar").exists()) {
 					new File("plugins/update/NPCWarehouse.jar").delete();
 				}
-				new File("plugins/update/NPCWarehouseUpdate.jar").createNewFile();
+				new File("plugins/update/NPCWarehouse.jar").createNewFile();
 				new AutoUpdater("https://bitbucket.org/jeremytrains/npcwarehouse/downloads/NPCWarehouse.jar", this).download("plugins/update/NPCWarehouse.jar");
 			}
 		} catch(IOException e) {
@@ -226,4 +226,8 @@ public class NPCWarehouse extends JavaPlugin {
 	}
 	
 	//=== LINKED PLUGINS END ===
+	
+	public HumanNPC getPlayersSelectedNpc(Player p) {
+		return (HumanNPC)manager.getNPC(selected.get(p));
+	}
 }

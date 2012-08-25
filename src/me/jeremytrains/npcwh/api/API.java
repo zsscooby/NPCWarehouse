@@ -1,13 +1,16 @@
-package me.jeremytrains.npcwh;
+package me.jeremytrains.npcwh.api;
+
+import me.jeremytrains.npcwh.NPCData;
+import me.jeremytrains.npcwh.NPCWarehouse;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import com.topcat.npclib.entity.*;
 
-public class NPCWarehouseAPI {
+public class API {
 	NPCWarehouse plugin;
 	
-	public NPCWarehouseAPI(NPCWarehouse m) {
+	public API(NPCWarehouse m) {
 		plugin = m;
 	}
 	

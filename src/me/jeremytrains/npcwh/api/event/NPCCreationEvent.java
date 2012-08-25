@@ -1,4 +1,4 @@
-package me.jeremytrains.npcwh.event;
+package me.jeremytrains.npcwh.api.event;
 
 import me.jeremytrains.npcwh.NPCData;
 
