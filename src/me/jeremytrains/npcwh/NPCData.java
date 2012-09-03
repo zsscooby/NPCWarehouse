@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+
 import com.topcat.npclib.entity.HumanNPC;
 
 public class NPCData {
@@ -16,6 +17,7 @@ public class NPCData {
 	Location loc;
 	public NPCWaypoint waypoint;
 	public final static String DEFAULT_SKIN = "http://www.minecraft.net/images/char.png";
+	private Player follow = null;
 	
 	public NPCData(HumanNPC npc, String message, int id, Location l, String owner) {
 		this.npc = npc;
@@ -86,25 +88,34 @@ public class NPCData {
 		p.sendMessage(chat);
 	}
 	
-	public Player getOwner() {
-		if (owner.equalsIgnoreCase("owner_unset") || owner.equalsIgnoreCase("NPCWH_API_CREATED"))
-			return null;
-		else
-			return Bukkit.getPlayerExact(owner);
+	public String getOwner() {
+		return owner;
 	}
 	
 	public boolean isOwner(Player p) {
-		if (getOwner() == null) {
+		if (owner.equalsIgnoreCase("owner_unset") || owner.equalsIgnoreCase("NPCWH_API_CREATED")) {
 			return false;
 		}
-		if (p.equals(getOwner())) {
+		if (p.equals(Bukkit.getPlayerExact(getOwner()))) {
 			return true;
 		} else {
 			return false;
 		}
 	}
 	
-	public void setOwner (String p) {
+	public void setOwner(String p) {
 		owner = p;
+	}
+	
+	public void followPlayer(Player p) {
+		follow = p;
+	}
+	
+	public Player isFollowingPlayer() {
+		return follow;
+	}
+	
+	public void stopFollowingPlayer() {
+		follow = null;
 	}
 }

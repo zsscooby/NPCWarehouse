@@ -4,6 +4,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -38,6 +40,11 @@ public class PlList implements Listener {
             if (npc != null && event.getTarget() instanceof Player) {
                 if (nevent.getNpcReason() == NpcTargetReason.CLOSEST_PLAYER || nevent.getNpcReason() == NpcTargetReason.NPC_BOUNCED) {
                     Player p = (Player) event.getTarget();
+                    if (plugin.getNpcInfo(npc).isFollowingPlayer() != null) {
+                    	if (plugin.getNpcInfo(npc).isFollowingPlayer().equals(p)) {
+                    		return;
+                    	}
+                    }
                     plugin.getNpcInfo(npc).chat(p);
                     if(plugin.getNpcInfo(npc).getLookAt()) {
                     	npc.lookAtPoint(p.getLocation());
@@ -79,6 +86,7 @@ public class PlList implements Listener {
 	
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent event) {
+		//=== LOOKAT CHECK ===
 		List<Entity> nEnt= event.getPlayer().getNearbyEntities(5, 5, 5);
 		if (nEnt.isEmpty())
 			return;
@@ -90,6 +98,31 @@ public class PlList implements Listener {
 				NPCData data = plugin.getNpcInfo(npc);
 				if (data.getLookAt()) {
 					npc.lookAtPoint(event.getPlayer().getEyeLocation());
+				}
+			}
+		}
+		
+		//=== FOLLOW CHECK ===
+		for (int i = 0; i < plugin.npcs.length; i++) {
+			if (plugin.npcs[i] != null) {
+				if (plugin.npcs[i].isFollowingPlayer() != null) {
+					if (plugin.npcs[i].isFollowingPlayer().equals(event.getPlayer())) {
+						Location l = event.getPlayer().getLocation();
+						l.setX(l.getX() - 1);
+						if (!l.getBlock().getType().equals(Material.AIR)) {
+							l.setX(l.getX() + 1);
+							l.setZ(l.getZ() - 1);
+						} else if (!l.getBlock().getType().equals(Material.AIR)) {
+							l.setX(l.getX() + 1);
+							l.setZ(l.getZ() + 1);
+						} else if (!l.getBlock().getType().equals(Material.AIR)) {
+							l.setX(l.getX() - 1);
+							l.setZ(l.getZ() + 1);
+						} else {
+							l = event.getPlayer().getLocation();
+						}
+						plugin.npcs[i].npc.walkTo(l);
+					}
 				}
 			}
 		}

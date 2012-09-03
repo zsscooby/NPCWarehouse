@@ -12,6 +12,9 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+//import me.jeremytrains.npcwh.type.miner.MinerCommandHandler;
+
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.Plugin;
@@ -31,12 +34,12 @@ public class NPCWarehouse extends JavaPlugin {
 	public NPCManager manager;
 	public Map<Player, String> selected = new HashMap<Player, String>();
 	public int nullCode = 43343;
-	private NpcDataFile npcData;
+	public NpcDataFile npcData;
 	public static PermissionHandler permissionHandler;
 	private static boolean usePermPlugin = false;
 	public static boolean useSpout = false, useFactions = false;
 	public static NPCWaypoint[] npcwypts = new NPCWaypoint[1000];
-	private ConfigFile config;
+	public ConfigFile config;
 
 	@Override
 	public void onDisable() {
@@ -61,6 +64,7 @@ public class NPCWarehouse extends JavaPlugin {
 		getCommand("npc").setExecutor(commandHandler);
 		getCommand("npcwh").setExecutor(commandHandler);
 		getCommand("npcwarehouse").setExecutor(commandHandler);
+		//getCommand("miner").setExecutor(new MinerCommandHandler(this));
 		log.info(INTRO + "Command handler setup successfully!");
 		log.info(INTRO + "Setting up npc manager...");
 		try {
@@ -78,7 +82,7 @@ public class NPCWarehouse extends JavaPlugin {
 		this.getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable(){
 			@Override
 			public void run() {
-				log.info(INTRO + npcData.totNpcs + " NPC(s) have been loaded!");		
+				log.info(INTRO + npcData.totNpcs + " NPC(s) have been loaded in a total of " + npcData.totWorlds + " world(s)");		
 			}
 		}, 60);
 		log.info(INTRO + "Npc data loaded successfully!");
@@ -101,6 +105,9 @@ public class NPCWarehouse extends JavaPlugin {
 		
 		//Quoting this line out completely disables the waypoint system -- just remove it from the cmd handler
 		//new WptList(this).start();
+		
+		//METRICS
+		new MetricsManager(this).setupMetrics();
 		log.info("===== NPCWarehouse v" + this.getDescription().getVersion() + " by jeremytrains is now enabled! =====");
 	}
 	
@@ -116,10 +123,10 @@ public class NPCWarehouse extends JavaPlugin {
 		}
 	}
 	
-	private void saveAllData() {
+	public void saveAllData() {
 		npcData.saveNpcData();
 	}
-	private void loadAllData() {
+	public void loadAllData() {
 		npcData = new NpcDataFile(this);
 		npcs = npcData.loadNpcData();
 	}
@@ -229,5 +236,9 @@ public class NPCWarehouse extends JavaPlugin {
 	
 	public HumanNPC getPlayersSelectedNpc(Player p) {
 		return (HumanNPC)manager.getNPC(selected.get(p));
+	}
+	
+	public static NPCWarehouse getNPCWarehouse() {
+		return ((NPCWarehouse) Bukkit.getPluginManager().getPlugin("NPCWarehouse"));
 	}
 }
