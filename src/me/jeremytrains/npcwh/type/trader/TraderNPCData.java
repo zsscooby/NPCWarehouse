@@ -46,6 +46,7 @@ public class TraderNPCData extends NPCData {
 		if (task != null)
 			return;
 		task = t;
+		task.setInventoryView(t.getPlayer().openInventory(t.getTrader().npc.getInventory()));
 	}
 	
 	public ArrayList<Stockable> getStock() {

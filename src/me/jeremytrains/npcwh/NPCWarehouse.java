@@ -14,10 +14,13 @@ import java.util.logging.Logger;
 
 //import me.jeremytrains.npcwh.type.miner.MinerCommandHandler;
 
+import net.milkbowl.vault.economy.Economy;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.RegisteredServiceProvider;
 
 import com.topcat.npclib.*;
 import com.topcat.npclib.entity.HumanNPC;
@@ -40,6 +43,8 @@ public class NPCWarehouse extends JavaPlugin {
 	public static boolean useSpout = false, useFactions = false;
 	public static NPCWaypoint[] npcwypts = new NPCWaypoint[1000];
 	public ConfigFile config;
+	public Economy economy = null;
+	public static boolean useEconomy = false;
 
 	@Override
 	public void onDisable() {
@@ -52,13 +57,14 @@ public class NPCWarehouse extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		log.info("===== NPCWarehouse v" + this.getDescription().getVersion() + " by jeremytrains =====");
-		log.info(INTRO + "Searching for permissions plugin...");
 		if (inSetupMode) {
 			log.info(INTRO + "Plugin is in Development Mode! Some features may not work!");
 		}
 		config = new ConfigFile(this);
 		config.configCheck();
+		log.info(INTRO + "Setting up linked plugins...");
 		setupLinkedPlugins();
+		log.info(INTRO + "Linked plugins setup!");
 		commandHandler = new CommandHandler(this);
 		log.info(INTRO + "Setting up command handler...");
 		getCommand("npc").setExecutor(commandHandler);
@@ -180,13 +186,19 @@ public class NPCWarehouse extends JavaPlugin {
 	
 	private void setupLinkedPlugins() {
 		if (ConfigFile.usePermissions) {
+			log.info(INTRO + "Setting up permissions...");
 			setupPermissions();
 		}
 		
 		if (ConfigFile.useSpout) {
+			log.info(INTRO + "Setting up spout...");
 			setupSpout();
 		}
-		setupFactions();
+		
+		if (ConfigFile.useVault) {
+			log.info(INTRO + "Setting up economy...");
+			useEconomy = setupEconomy();
+		}
 	}
 	
 	private void setupPermissions() {
@@ -215,7 +227,7 @@ public class NPCWarehouse extends JavaPlugin {
 	        return;
 	    }
 	    
-	    log.info(INTRO + "Spout detected! Using " + spoutPlugin.getDescription().getFullName() + "for spout support!");
+	    log.info(INTRO + "Spout detected! Using " + spoutPlugin.getDescription().getFullName() + " for spout support!");
 	    useSpout = true;
 	}
 	
@@ -232,6 +244,17 @@ public class NPCWarehouse extends JavaPlugin {
 	    useFactions = true;
 	}
 	
+	private boolean setupEconomy() {
+		if (Bukkit.getPluginManager().getPlugin("Vault") == null)
+			return false;
+        RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+        if (economyProvider != null) {
+        	log.info(INTRO + "Found and will use " + economyProvider.getPlugin().getDescription().getFullName() + " for economy!");
+            economy = economyProvider.getProvider();
+        }
+
+        return (economy != null);
+    }
 	//=== LINKED PLUGINS END ===
 	
 	public HumanNPC getPlayersSelectedNpc(Player p) {

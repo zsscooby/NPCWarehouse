@@ -15,7 +15,7 @@ public class ConfigFile {
     File file = new File(directory + File.separator + "config.yml");
     
     //CONFIG FILE SETTINGS
-	public static boolean useSpout=false, usePermissions=true, rightClickSelect=true, capes=false, skins=false, crafting=true;
+	public static boolean useSpout=false, usePermissions=true, useVault=false, rightClickSelect=true, capes=false, skins=false, crafting=true;
 	public static String chatFormat = null;
 	//=-=-=-=-=-=-=-=-=-=-	
 	
@@ -84,6 +84,7 @@ public class ConfigFile {
     private void addDefaults(){
         plugin.log.info(plugin.INTRO + "Generating Config File...");
         write("General.use-permissions", true);
+        write("General.use-vault", false);
         write("General.enable-right-click-selecting", true);
         write("General.enable-npc-crafting", true);
         write("Messages.chat-format", "<{name}> {msg}");
@@ -97,6 +98,7 @@ public class ConfigFile {
     private void loadkeys() {
         plugin.log.info(plugin.INTRO + "Loading Config File...");
         usePermissions = readBoolean("General.use-permissions");
+        useVault = readBoolean("General.use-vault");
         rightClickSelect = readBoolean("General.right-click-selecting");
         crafting = readBoolean("General.enable-npc-crafting");
         chatFormat = readString("Messages.chat-format");
