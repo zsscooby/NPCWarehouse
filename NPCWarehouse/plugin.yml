@@ -1,0 +1,28 @@
+name: NPCWarehouse
+main: me.jeremytrains.npcwh.NPCWarehouse
+version: 0.7
+commands:
+   npc:
+      description: The NPCWarehouse command
+      usage: |
+           /npc [arguments]
+   npcwh:
+      description: The NPCWarehouse command
+      usage: |
+           /npcwh [arguments]
+   npcwarehouse:
+      description: The NPCWarehouse command
+      usage: |
+           /npcwarehouse [arguments]
+   miner:
+      description: The NPCWarehouse miner command
+      usage: |
+           Invalid command usage! Use '/miner help' for help!
+   npca:
+      description: The NPCWarehouse admin command
+      usage: |
+           Invalid command usage! Use '/npca help' for help!
+   npcadmin:
+      description: The NPCWarehouse admin command
+      usage: |
+           Invalid command usage! Use '/npcadmin help' for help!
